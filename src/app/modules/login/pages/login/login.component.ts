@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // Import consolidé pour ReactiveForms
 import { RouterLink } from '@angular/router';
 import { TITLE } from '../../../../utils/general';
 import { RegexService } from '../../../../service/regex.service';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule], // On importe le ReactiveFormsModule ici
+  // On regroupe les imports nécessaires dans la propriété `imports`
+  imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  styleUrls: ['./login.component.scss'], // Correctement pluralisé
 })
 export class LoginComponent {
   title: string = TITLE;
