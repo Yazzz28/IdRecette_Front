@@ -1,0 +1,55 @@
+<main class="signin-container">
+    <section class="signin-header">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="signin-form">
+        <h1 class="signin-title">Connexion</h1>
+  
+        <div class="input-container">
+          <input
+            type="text"
+            name="email"
+            id="email"
+            class="input-field"
+            formControlName="email"
+            required
+            placeholder="Email"
+          />
+  
+          @if (loginForm.controls['email'].invalid && loginForm.controls['email'].touched) {
+            <div class="error-message">
+              @if (loginForm.get('email')?.errors?.['required']) {
+                <p class="error-text">L'email est requis</p>
+              }
+              @if (loginForm.get('email')?.errors?.['email']) {
+                <p class="error-text">L'email n'est pas valide</p>
+              }
+            </div>
+          }
+  
+          <input
+            type="password"
+            name="password"
+            formControlName="password"
+            id="password"
+            class="input-field"
+            required
+            placeholder="Mot de passe"
+          />
+  
+          @if (loginForm.controls['password'].invalid && loginForm.controls['password'].touched) {
+            <div class="error-message">
+              @if (loginForm.get('password')?.errors?.['required']) {
+                <p class="error-text">Le mot de passe est requis</p>
+              }
+            </div>
+          }
+        </div>
+  
+        <button class="submit-button">Je me connecte</button>
+        <p class="account-prompt">
+          Vous n'avez pas de compte ?
+          <a class="signup-link" [routerLink]="['/signin']">Inscrivez-vous</a>
+        </p>
+      </form>
+    </section>
+  </main>
+  

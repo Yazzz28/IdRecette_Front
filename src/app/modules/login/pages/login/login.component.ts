@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // Import consolidé pour ReactiveForms
-import { RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
+import { RouterLink, Router } from '@angular/router'; 
 import { TITLE } from '../../../../utils/general';
 import { RegexService } from '../../../../service/regex.service';
+import { AuthService } from '../../../../service/auth-service.service'; 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  // On regroupe les imports nécessaires dans la propriété `imports`
   imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'], // Correctement pluralisé
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   title: string = TITLE;
@@ -21,7 +21,12 @@ export class LoginComponent {
 
   loginForm: FormGroup;
 
-  constructor(private readonly fb: FormBuilder, private readonly regexService: RegexService) {
+  constructor(
+    private readonly fb: FormBuilder, 
+    private readonly regexService: RegexService, 
+    private readonly authService: AuthService, 
+    private readonly router: Router 
+  ) {
     this.loginForm = this.fb.group({
       email: [
         '',
@@ -34,11 +39,22 @@ export class LoginComponent {
     });
   }
 
-  // Fonction pour soumettre le formulaire
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Formulaire valide, connexion en cours...');
-      // Logic de connexion ici
+      const { email, password } = this.loginForm.value;
+
+      this.authService.login(email, password).subscribe({
+        next: (response) => {
+          localStorage.setItem('token', response.token);
+          console.log('Connexion réussie!', response);
+          this.router.navigate(['/']);
+        },
+        error: (error) => {
+          console.error('Erreur de connexion', error);
+          alert('Erreur de connexion : ' + error.message); // Affichez un message d'erreur
+        }
+      });
     } else {
       console.log('Formulaire invalide');
     }
