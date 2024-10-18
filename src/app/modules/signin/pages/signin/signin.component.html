@@ -1,55 +1,139 @@
 <main class="signin-container">
-    <section class="signin-header">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="signin-form">
-        <h1 class="signin-title">Connexion</h1>
-  
-        <div class="input-container">
-          <input
-            type="text"
-            name="email"
-            id="email"
-            class="input-field"
-            formControlName="email"
-            required
-            placeholder="Email"
-          />
-  
-          @if (loginForm.controls['email'].invalid && loginForm.controls['email'].touched) {
-            <div class="error-message">
-              @if (loginForm.get('email')?.errors?.['required']) {
-                <p class="error-text">L'email est requis</p>
-              }
-              @if (loginForm.get('email')?.errors?.['email']) {
-                <p class="error-text">L'email n'est pas valide</p>
-              }
-            </div>
+  <section class="signin-header">
+    <form [formGroup]="signinForm" (ngSubmit)="onSubmit()" class="signin-form">
+      <h1 class="signin-title">Inscription</h1>
+
+      <div class="input-container">
+        <!-- Champ pour le Prénom -->
+        <input
+          type="text"
+          name="firstname"
+          id="firstname"
+          class="input-field"
+          formControlName="firstname"
+          required
+          placeholder="Prénom"
+        />
+        @if (signinForm.get('firstname')?.invalid &&
+        signinForm.get('firstname')?.touched) {
+        <div class="error-message">
+          @if (signinForm.get('firstname')?.errors?.['required']) {
+          <p class="error-text">Le prénom est requis</p>
+          } @if (signinForm.get('firstname')?.errors?.['minlength']) {
+          <p class="error-text">
+            Le prénom doit contenir au moins 3 caractères
+          </p>
+          } @if (signinForm.get('firstname')?.errors?.['maxlength']) {
+          <p class="error-text">Le prénom ne doit pas dépasser 15 caractères</p>
           }
-  
+        </div>
+        }
+
+        <!-- Champ pour le Nom -->
+        <input
+          type="text"
+          name="lastname"
+          id="lastname"
+          class="input-field"
+          formControlName="lastname"
+          required
+          placeholder="Nom"
+        />
+        @if (signinForm.get('lastname')?.invalid &&
+        signinForm.get('lastname')?.touched) {
+        <div class="error-message">
+          @if (signinForm.get('lastname')?.errors?.['required']) {
+          <p class="error-text">Le nom est requis</p>
+          } @if (signinForm.get('lastname')?.errors?.['minlength']) {
+          <p class="error-text">Le nom doit contenir au moins 3 caractères</p>
+          } @if (signinForm.get('lastname')?.errors?.['maxlength']) {
+          <p class="error-text">Le nom ne doit pas dépasser 15 caractères</p>
+          }
+        </div>
+        }
+
+        <!-- Champ pour l'Email -->
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="input-field"
+          formControlName="email"
+          required
+          placeholder="Email"
+        />
+        @if (signinForm.get('email')?.invalid &&
+        signinForm.get('email')?.touched) {
+        <div class="error-message">
+          @if (signinForm.get('email')?.errors?.['required']) {
+          <p class="error-text">L'email est requis</p>
+          } @if (signinForm.get('email')?.errors?.['email']) {
+          <p class="error-text">L'email n'est pas valide</p>
+          }
+        </div>
+        }
+
+        <!-- Groupe de mots de passe -->
+        <div formGroupName="passwords">
+          <!-- Champ pour le Mot de Passe -->
           <input
             type="password"
             name="password"
-            formControlName="password"
             id="password"
             class="input-field"
+            formControlName="password"
             required
             placeholder="Mot de passe"
           />
-  
-          @if (loginForm.controls['password'].invalid && loginForm.controls['password'].touched) {
-            <div class="error-message">
-              @if (loginForm.get('password')?.errors?.['required']) {
-                <p class="error-text">Le mot de passe est requis</p>
-              }
-            </div>
+          @if (passwordsGroup.get('password')?.invalid &&
+          passwordsGroup.get('password')?.touched) {
+          <div class="error-message">
+            @if (passwordsGroup.get('password')?.errors?.['required']) {
+            <p class="error-text">Le mot de passe est requis</p>
+            } @if (passwordsGroup.get('password')?.errors?.['minlength']) {
+            <p class="error-text">
+              Le mot de passe doit contenir au moins 8 caractères
+            </p>
+            } @if (passwordsGroup.get('password')?.errors?.['securePassword']) {
+            <p class="error-text">
+              Le mot de passe doit contenir des lettres majuscules, minuscules,
+              des chiffres et des caractères spéciaux
+            </p>
+            }
+          </div>
+          }
+
+          <!-- Champ pour la Confirmation du Mot de Passe -->
+          <input
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            class="input-field"
+            formControlName="confirmPassword"
+            required
+            placeholder="Confirmez le mot de passe"
+          />
+          @if (passwordsGroup.get('confirmPassword')?.touched &&
+          passwordsGroup.errors?.['passwordsMismatch']) {
+          <div class="error-message">
+            <p class="error-text">Les mots de passe ne correspondent pas</p>
+          </div>
           }
         </div>
-  
-        <button class="submit-button">Je me connecte</button>
-        <p class="account-prompt">
-          Vous n'avez pas de compte ?
-          <a class="signup-link" [routerLink]="['/signin']">Inscrivez-vous</a>
-        </p>
-      </form>
-    </section>
-  </main>
-  
+      </div>
+
+      <button
+        [routerLink]="['/allergens']"
+        class="submit-button"
+        [disabled]="signinForm.invalid"
+      >
+        Je m'inscris
+      </button>
+
+      <p class="account-prompt">
+        Vous avez déjà un compte ?
+        <a class="login-link" [routerLink]="['/login']">Connectez-vous</a>
+      </p>
+    </form>
+  </section>
+</main>

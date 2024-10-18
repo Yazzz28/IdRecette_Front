@@ -1,54 +1,85 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
-import { RouterLink, Router } from '@angular/router'; 
-import { AuthService } from '../../../../service/auth-service.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms'; 
+import { RouterLink } from '@angular/router';
+import { User } from '../../../../utils/user';
+import { SigninService } from '../../../../service/signin.service'; // Adjust the import path as necessary
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink], // Importer ReactiveFormsModule ici
   templateUrl: './signin.component.html',
-  styleUrls: ['./signin.component.scss'] // Correction du styleUrls
+  styleUrls: ['./signin.component.scss'],
+  imports: [RouterLink, ReactiveFormsModule],
 })
 export class SigninComponent {
-  loginForm: FormGroup;
+  signinForm: FormGroup;
+  user: User = {
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  };
 
-  constructor(
-    private readonly fb: FormBuilder, 
-    private readonly authService: AuthService, 
-    private readonly router: Router
-  ) {
-    this.loginForm = this.fb.group({
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.email // Validation pour l'email
-        ]
-      ],
-      password: ['', Validators.required],
+  constructor(private readonly fb: FormBuilder, private readonly signinService: SigninService) {
+    this.signinForm = this.fb.group({
+      firstname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      email: ['', [Validators.required, Validators.email]],
+      passwords: this.fb.group(
+        {
+          password: ['', [Validators.required, this.securePasswordValidator(), Validators.minLength(8)]],
+          confirmPassword: ['', [Validators.required]]
+        },
+        { validators: this.passwordMatchValidator() }
+      )
     });
   }
 
-  // Fonction pour soumettre le formulaire
-  onSubmit() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value; // Obtenir les valeurs du formulaire
+  get passwordsGroup() {
+    return this.signinForm.get('passwords') as FormGroup;
+  }
 
-      this.authService.login(email, password).subscribe({
-        next: (response: { token: string; }) => {
-          // Stocker le token JWT dans le localStorage ou sessionStorage
-          localStorage.setItem('token', response.token);
-          console.log('Connexion réussie!', response);
-          this.router.navigate(['/dashboard']); // Rediriger vers le tableau de bord
-        },
-        error: (error: { error: { message: string; }; }) => {
-          console.error('Erreur de connexion', error);
-          alert('Erreur de connexion : ' + error.error.message); // Afficher un message d'erreur
-        }
-      });
+  onSubmit() {
+    if (this.signinForm.valid) {
+      console.log('Formulaire valide, inscription en cours...');
+      const formValue = {
+        ...this.signinForm.value,
+        password: this.signinForm.get('passwords.password')?.value,
+        confirmPassword: this.signinForm.get('passwords.confirmPassword')?.value
+      };
+      this.user = formValue;
+
+      // Store user information in the service
+      this.signinService.setUser(this.user);
+      
+      // You can now navigate to the next step or process the data further
     } else {
-      console.log('Formulaire invalide');
+      console.log('Formulaire invalide', this.signinForm.errors);
+      this.signinForm.markAllAsTouched();
     }
+  }
+  
+  securePasswordValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) return null;
+      
+      const hasUpperCase = /[A-Z]/.test(value);
+      const hasLowerCase = /[a-z]/.test(value);
+      const hasNumber = /\d/.test(value);
+      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+      
+      const isValid = hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+      return isValid ? null : { securePassword: true };
+    };
+  }
+
+  passwordMatchValidator(): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const password = group.get('password')?.value;
+      const confirmPassword = group.get('confirmPassword')?.value;
+      return password === confirmPassword ? null : { passwordsMismatch: true };
+    };
   }
 }

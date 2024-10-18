@@ -1,0 +1,219 @@
+// Variables de couleur avec meilleur contraste
+$background-color: #202735;
+$error-color: #ff4f4f;
+$input-background: rgba(255, 255, 255, 0.8);
+$link-color: #f1c0ad;
+$title-color: #ffffff;
+$button-background: #f1c0ad;
+$button-hover-background: darken($button-background, 10%);
+$blur-background: rgba(255, 255, 255, 0.2);
+$input-container-background: rgba(255, 255, 255, 0.15);
+$placeholder-color: rgba(255, 255, 255, 0.8);
+$button-font-size: 1.2rem;
+$account-prompt-font-size: 1.1rem;
+$focus-outline-color: #4a9eff;
+
+// Importation de la police Montserrat
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+// Mixins pour l'accessibilité
+@mixin focus-visible {
+  outline: 3px solid $focus-outline-color;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba($focus-outline-color, 0.2);
+}
+
+.signin-container {
+  background-color: $background-color;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: "Montserrat", sans-serif;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.signin-header {
+  width: 100%;
+  max-width: 400px; // Réduit pour un meilleur contrôle
+}
+
+.signin-form {
+  background: $blur-background;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.signin-title {
+  color: $title-color;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.input-container {
+  background: $input-container-background;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: $background-color;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: $title-color;
+  transition: all 0.2s ease;
+  margin-bottom: 0.75rem;
+  display: block;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $placeholder-color;
+    opacity: 0.9;
+  }
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    @include focus-visible;
+    border-color: $focus-outline-color;
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: $error-color;
+  }
+}
+
+[formGroupName="passwords"] {
+  width: 100%;
+  
+  .input-field {
+    margin: 0.75rem 0;
+    
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.error-message {
+  width: 100%;
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba($error-color, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba($error-color, 0.3);
+  box-sizing: border-box;
+
+  .error-text {
+    color: darken($error-color, 5%);
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+}
+
+.submit-button {
+  background-color: $button-background;
+  color: $background-color;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: $button-font-size;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin: 1.5rem 0;
+  display: block;
+
+  &:hover {
+    background-color: $button-hover-background;
+  }
+
+  &:focus {
+    @include focus-visible;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.account-prompt {
+  text-align: center;
+  color: $title-color;
+  font-size: $account-prompt-font-size;
+  margin: 1.5rem 0 0;
+
+  .login-link {
+    color: $link-color;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: lighten($link-color, 10%);
+      text-decoration: underline;
+    }
+
+    &:focus {
+      @include focus-visible;
+      border-radius: 4px;
+    }
+  }
+}
+
+// Media queries pour la responsivité
+@media screen and (max-width: 480px) {
+  .signin-container {
+    padding: 1rem;
+  }
+
+  .signin-form {
+    padding: 1.5rem;
+  }
+
+  .signin-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-container {
+    padding: 1rem;
+  }
+
+  .submit-button {
+    padding: 0.875rem;
+    font-size: 1.1rem;
+  }
+
+  .account-prompt {
+    font-size: 1rem;
+  }
+}
+
+// Styles pour l'accessibilité au clavier
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
